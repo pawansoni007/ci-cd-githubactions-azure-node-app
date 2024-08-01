@@ -1,0 +1,29 @@
+name: CI-CD
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{secrets.DOKCER_PASSWORD}}
+      - name: Build Docker image
+        run: docker build -t pawansoni007/node-app_github_actions .
+      - name: Publish image to Docker Hub
+        run: docker push pawansoni007/node-app_github_actions:latest
+
+  deploy:
+    needs: build
+    runs-on: [azure-node]
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull pawansoni007/node-app_github_actions:latest
+      - name: Delete old container
+        run: docker rm -f node-app-container
+      - name: Run a docker container
+        run: docker run -d -p 4000:4000 -name node-app-container pawansoni007/node-app_github_actions:latest
