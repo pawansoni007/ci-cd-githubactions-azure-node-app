@@ -26,4 +26,4 @@ jobs:
       - name: Delete old container
         run: docker rm -f node-app-container
       - name: Run a docker container
-        run: docker run -d -p 4000:4000 -name node-app-container pawansoni007/node-app_github_actions:latest
+        run: docker run -d -p 4000:4000 --name node-app-container pawansoni007/node-app_github_actions:latest
